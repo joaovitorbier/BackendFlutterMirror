@@ -20,10 +20,7 @@
 		<maven.compiler.target>11</maven.compiler.target>
 	</properties>
 	<dependencies>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
-		</dependency>
+		
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt</artifactId>
@@ -72,8 +69,6 @@
 			<scope>test</scope>
 		</dependency>
 		
-
-
 	</dependencies>
 
 	<build>

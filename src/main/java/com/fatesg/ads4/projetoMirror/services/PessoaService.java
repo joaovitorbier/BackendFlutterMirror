@@ -6,22 +6,18 @@ import java.util.Optional;
 import org.hibernate.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.fatesg.ads4.projetoMirror.domain.Feedback;
 import com.fatesg.ads4.projetoMirror.domain.Pessoa;
-import com.fatesg.ads4.projetoMirror.enumeradores.Perfil;
+
 import com.fatesg.ads4.projetoMirror.repositories.PessoaRepository;
-import com.fatesg.ads4.projetoMirror.security.UserSS;
-import com.fatesg.ads4.projetoMirror.services.exceptions.AuthorizationException;
+
 import com.fatesg.ads4.projetoMirror.services.exceptions.DataIntegrityException;
 
 @Service
 public class PessoaService {
 	
-	@Autowired
-	private BCryptPasswordEncoder encoder;
 	
 	@Autowired
 	PessoaRepository repositorio;
@@ -29,14 +25,6 @@ public class PessoaService {
 	//BUSCA UMA PESSOA POR ID
 	//ADMIN PODE USAR PARA BUSCAR QUALQUER UM, USER SÓ PODE BUSCAR ELE MESMO
 	public Pessoa buscarId(Integer id) {
-		
-		//SE A PESSOA NÃO FOR ADMIN SÓ PERMITE QUE CLIENTE BUSQUE ELE MESMO.
-		UserSS user = UserService.authenticated();
-		if(user == null || !user.hasRole(Perfil.ADMIN) && !id.equals(user.getId())) {
-			
-			throw new AuthorizationException("Acesso negado");
-			
-		}
 		
 		Optional<Pessoa> pessoa = repositorio.findById(id);
 		
@@ -49,13 +37,6 @@ public class PessoaService {
 	//SÓ ADMIN PODE USAR
 	public List<Pessoa> buscarTudo(){
 		
-		UserSS user = UserService.authenticated();
-		
-		if(user == null || !user.hasRole(Perfil.ADMIN) && !user.hasRole(Perfil.AVALIADOR)) {
-			
-			throw new AuthorizationException("Acesso negado");
-			
-		}
 		return repositorio.findAll();
 		
 	}
@@ -86,7 +67,7 @@ public class PessoaService {
 		
 		String senha = pessoa.getSenha(); //PEGANDO A SENHA PARA CRIPTOGRAFAR
 		
-		senha = encoder.encode(senha); //CRIPTOGRAFANDO A SENHA
+		
 		
 		pessoa.setSenha(senha); //COLOCANDO A PESSOA COM A SENHA CRIPTAGRAFADA PARA SER SALVA NO BANCO
 		
