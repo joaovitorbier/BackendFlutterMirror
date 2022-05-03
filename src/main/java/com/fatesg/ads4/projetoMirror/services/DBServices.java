@@ -40,7 +40,7 @@ public class DBServices {
 	FeedbackService feedbackService;
 	
 	public void instanciarBaseDados() {
-		
+		/*
 		//INSTANCIANDO USUÁRIOS BÁSICOS
 		
 
@@ -116,7 +116,7 @@ public class DBServices {
 			Feedback feedback2 = new Feedback(pessoa2,pessoa, date, motivo, "Fazer urgente");
 			feedback2.setStatus(FeedBackStatus.APLICADO);
 			feedbackService.inserir(feedback2);
-			
+			*/
 	}
 
 }
