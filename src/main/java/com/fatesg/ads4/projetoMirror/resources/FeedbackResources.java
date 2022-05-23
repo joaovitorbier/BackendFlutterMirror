@@ -128,8 +128,8 @@ public class FeedbackResources {
 	}
 	
 	//BUSCA TODOS OS FEEDBACKS PENDENTES DAQUELE AVALIADOR
-		@RequestMapping(value="/pendentes/pessoa/{id}", method = RequestMethod.GET)
-		public ResponseEntity<List<Feedback>> buscarFeedbacksAvaliadorPendentes(@PathVariable Integer id){
+	@RequestMapping(value="/pendentes/pessoa/{id}", method = RequestMethod.GET)
+	public ResponseEntity<List<Feedback>> buscarFeedbacksAvaliadorPendentes(@PathVariable Integer id){
 			
 			Pessoa pessoa = pessoaService.buscarId(id);
 			

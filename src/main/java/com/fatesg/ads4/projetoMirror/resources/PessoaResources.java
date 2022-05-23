@@ -99,4 +99,13 @@ public class PessoaResources {
 		
 	}
 	
+	/*
+	@RequestMapping(method = RequestMethod.POST)
+	public ResponseEntity<Void> logar(@RequestBody Pessoa pessoa){
+		
+		
+		
+	}
+	*/
+	
 }
