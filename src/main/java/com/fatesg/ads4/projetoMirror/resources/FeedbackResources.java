@@ -15,9 +15,11 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.fatesg.ads4.projetoMirror.domain.Feedback;
 import com.fatesg.ads4.projetoMirror.domain.Pessoa;
+import com.fatesg.ads4.projetoMirror.domain.TextosFeedbackDTO;
 import com.fatesg.ads4.projetoMirror.enumeradores.FeedBackStatus;
 import com.fatesg.ads4.projetoMirror.services.FeedbackService;
 import com.fatesg.ads4.projetoMirror.services.PessoaService;
+import com.fatesg.ads4.projetoMirror.services.TextosFeedbackDTOService;
 
 @RestController
 @RequestMapping(value="/feedbacks")
@@ -28,6 +30,9 @@ public class FeedbackResources {
 	
 	@Autowired
 	PessoaService pessoaService;
+	
+	@Autowired
+	TextosFeedbackDTOService feedbackTextoService;
 
 	@RequestMapping(value="/{id}", method=RequestMethod.GET)
 	public ResponseEntity<Feedback> buscar(@PathVariable Integer id) {
@@ -58,6 +63,24 @@ public class FeedbackResources {
 		
 	}
 	
+	@RequestMapping(value="/textoFeedback/{id}",method = RequestMethod.PUT)
+	public ResponseEntity<Void> inserirTextoFeedback(@RequestBody TextosFeedbackDTO textoFeedback, @PathVariable Integer id){
+		
+		feedbackTextoService.InserirTexto(textoFeedback, id);
+		
+		return ResponseEntity.noContent().build();
+		
+	}
+	
+	@RequestMapping(value="/replicaFeedback/{id}",method = RequestMethod.PUT)
+	public ResponseEntity<Void> inserirReplicaFeedback(@RequestBody TextosFeedbackDTO textoFeedback, @PathVariable Integer id){
+		
+		feedbackTextoService.InserirReplica(textoFeedback, id);
+		
+		return ResponseEntity.noContent().build();
+		
+	}
+	
 	@RequestMapping(value="/{id}", method = RequestMethod.PUT)
 	public ResponseEntity<Void> atualizar(@RequestBody Feedback feedback, @PathVariable Integer id){
 		
@@ -78,13 +101,51 @@ public class FeedbackResources {
 	}
 	
 	//BUSCA TODOS OS FEEDBACKS DAQUELA PESSOA AVALIADA
-	@RequestMapping(value="/avaliado/pessoa/{id}", method = RequestMethod.GET)
-	public ResponseEntity<List<Feedback>> buscarFeedbacksAvaliado(@PathVariable Integer id){
+	@RequestMapping(value="/pessoa/avaliado/{id}", method=RequestMethod.GET)
+	public ResponseEntity<List<Feedback>> buscarPorAvaliado(@PathVariable Integer id) {
+		
+		List<Feedback> feedbacks = service.buscarTudo();
+		
+		feedbacks.removeIf(i -> (i.getAvaliado().getId() != id));
+		/*
+		for(int i = 0; i < feedbacks.size();i++) {
+			if(feedbacks.get(i).getAvaliado().getId() != id) {
+				feedbacks.remove(i);
+			}
+		}
+		*/
+		return ResponseEntity.ok().body(feedbacks);
+		
+	}
+	
+	//BUSCA TODOS OS FEEDBACKS DAQUELE PESSOA AVALIADOR
+	@RequestMapping(value="/pessoa/avaliador/{id}", method=RequestMethod.GET)
+	public ResponseEntity<List<Feedback>> buscarPorAvaliador(@PathVariable Integer id) {
+		
+		List<Feedback> feedbacks = service.buscarTudo();
+		
+		feedbacks.removeIf(i -> (i.getAvaliador().getId() != id));
+		/*
+		for(int i = 0; i < feedbacks.size();i++) {
+			if(feedbacks.get(i).getAvaliado().getId() != id) {
+				feedbacks.remove(i);
+			}
+		}
+		*/
+		return ResponseEntity.ok().body(feedbacks);
+		
+	}
+	
+	
+	
+	/* TENTATIVA FALHA DE FAZER UM ENDPOINT QUE BUSCA TODOS OS FEEDBACKS
+	@RequestMapping(value="/avaliado/aplicados/pessoa/{id}", method = RequestMethod.GET)
+	public ResponseEntity<List<Feedback>> buscarFeedbacksAvaliadoAplicados(@PathVariable Integer id){
 		
 		Pessoa pessoa = pessoaService.buscarId(id);
 		
 		List<Feedback> feedbacks = service.buscarPorAvaliado(pessoa);
-		
+		/*
 		for(int i = 0; i < feedbacks.size(); i++) {
 			
 			if(feedbacks.get(i).getStatus() != FeedBackStatus.APLICADO) {
@@ -111,10 +172,50 @@ public class FeedbackResources {
 		return ResponseEntity.ok().body(feedbacksFinalizados);
 		*/
 		
+	/*
+	@RequestMapping(value="/avaliado/pendentes/pessoa/{id}", method = RequestMethod.GET)
+	public ResponseEntity<List<Feedback>> buscarFeedbacksAvaliadoPendentes(@PathVariable Integer id){
+		
+		Pessoa pessoa = pessoaService.buscarId(id);
+		
+		List<Feedback> feedbacks = service.buscarPorAvaliado(pessoa);
+		
+		for(int i = 0; i < feedbacks.size(); i++) {
+			
+			if(feedbacks.get(i).getStatus() == FeedBackStatus.APLICADO) {
+				
+				feedbacks.remove(i);
+				
+			}
+			
+		}
+		
+		/*
+		List<Feedback> feedbacksFinalizados = new ArrayList<Feedback>();
+		
+		for(int i = 0; i < feedbacks.size(); i++) {
+			
+			if(feedbacks.get(i).getStatus() == FeedBackStatus.APLICADO) {
+				
+				feedbacksFinalizados.add(feedbacks.get(i));
+				
+			}
+			
+		}
+		
+		return ResponseEntity.ok().body(feedbacksFinalizados);
+		
+		
+		
+		
+		
+		
 		return ResponseEntity.ok().body(feedbacks);
 		
 	}
+	*/
 	
+	/*
 	//BUSCA TODOS OS FEEDBACKS DAQUELE AVALIADOR
 	@RequestMapping(value="/avaliador/pessoa/{id}", method = RequestMethod.GET)
 	public ResponseEntity<List<Feedback>> buscarFeedbacksAvaliador(@PathVariable Integer id){
@@ -128,7 +229,7 @@ public class FeedbackResources {
 	}
 	
 	//BUSCA TODOS OS FEEDBACKS PENDENTES DAQUELE AVALIADOR
-	@RequestMapping(value="/pendentes/pessoa/{id}", method = RequestMethod.GET)
+	@RequestMapping(value="/avaliador/pendentes/pessoa/{id}", method = RequestMethod.GET)
 	public ResponseEntity<List<Feedback>> buscarFeedbacksAvaliadorPendentes(@PathVariable Integer id){
 			
 			Pessoa pessoa = pessoaService.buscarId(id);
@@ -139,7 +240,7 @@ public class FeedbackResources {
 			
 			//SELECIONA AQUI OS PENDENTES E JOGA NESSA LISTA
 			for(int i = 0; i < feedbacks.size(); i++) {
-				if(feedbacks.get(i).getStatus() == FeedBackStatus.PENDENTE) {
+				if(feedbacks.get(i).getStatus() != FeedBackStatus.APLICADO) {
 					feedbacksPendentes.add(feedbacks.get(i));
 				}
 			}
@@ -147,4 +248,27 @@ public class FeedbackResources {
 			return ResponseEntity.ok().body(feedbacksPendentes);
 		}
 	
+
+
+//BUSCA TODOS OS FEEDBACKS PENDENTES DAQUELE AVALIADOR
+@RequestMapping(value="/avaliador/aplicados/pessoa/{id}", method = RequestMethod.GET)
+public ResponseEntity<List<Feedback>> buscarFeedbacksAvaliadorAplicados(@PathVariable Integer id){
+		
+		Pessoa pessoa = pessoaService.buscarId(id);
+		
+		List<Feedback> feedbacks = service.buscarPorAvaliador(pessoa);
+		
+		List<Feedback> feedbacksPendentes = new ArrayList<Feedback>();
+		
+		//SELECIONA AQUI OS PENDENTES E JOGA NESSA LISTA
+		for(int i = 0; i < feedbacks.size(); i++) {
+			if(feedbacks.get(i).getStatus() == FeedBackStatus.APLICADO) {
+				feedbacksPendentes.add(feedbacks.get(i));
+			}
+		}
+		
+		return ResponseEntity.ok().body(feedbacksPendentes);
+	}
+*/
 }
+	
