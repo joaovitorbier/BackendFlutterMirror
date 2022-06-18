@@ -137,6 +137,86 @@ public class FeedbackResources {
 	}
 	
 	
+	//BUSCA TODOS OS FEEDBACKS DAQUELE AVALIADO QUE FORAM APLICADOS
+	@RequestMapping(value="/pessoa/avaliado/aplicado/{id}", method=RequestMethod.GET)
+	public ResponseEntity<List<Feedback>> buscarPorAvaliadoAplicados(@PathVariable Integer id) {
+		
+		List<Feedback> feedbacks = service.buscarTudo();
+		
+		feedbacks.removeIf(i -> (i.getAvaliado().getId() != id));
+		
+		feedbacks.removeIf(i -> (i.getStatus() != FeedBackStatus.APLICADO));
+		
+		/*
+		for(int i = 0; i < feedbacks.size();i++) {
+			if(feedbacks.get(i).getAvaliado().getId() != id) {
+				feedbacks.remove(i);
+			}
+		}
+		*/
+		return ResponseEntity.ok().body(feedbacks);
+		
+	}
+	
+	@RequestMapping(value="/pessoa/avaliado/pendente/{id}", method=RequestMethod.GET)
+	public ResponseEntity<List<Feedback>> buscarPorAvaliadoPendentes(@PathVariable Integer id) {
+		
+		List<Feedback> feedbacks = service.buscarTudo();
+		
+		feedbacks.removeIf(i -> (i.getAvaliado().getId() != id));
+		
+		feedbacks.removeIf(i -> (i.getStatus() == FeedBackStatus.APLICADO));
+		
+		/*
+		for(int i = 0; i < feedbacks.size();i++) {
+			if(feedbacks.get(i).getAvaliado().getId() != id) {
+				feedbacks.remove(i);
+			}
+		}
+		*/
+		return ResponseEntity.ok().body(feedbacks);
+		
+	}
+	
+	@RequestMapping(value="/pessoa/avaliador/aplicado/{id}", method=RequestMethod.GET)
+	public ResponseEntity<List<Feedback>> buscarPorAvaliadorAplicados(@PathVariable Integer id) {
+		
+		List<Feedback> feedbacks = service.buscarTudo();
+		
+		feedbacks.removeIf(i -> (i.getAvaliador().getId() != id));
+		
+		feedbacks.removeIf(i -> (i.getStatus() != FeedBackStatus.APLICADO));
+		
+		/*
+		for(int i = 0; i < feedbacks.size();i++) {
+			if(feedbacks.get(i).getAvaliado().getId() != id) {
+				feedbacks.remove(i);
+			}
+		}
+		*/
+		return ResponseEntity.ok().body(feedbacks);
+		
+	}
+	
+	@RequestMapping(value="/pessoa/avaliador/pendente/{id}", method=RequestMethod.GET)
+	public ResponseEntity<List<Feedback>> buscarPorAvaliadorPendentes(@PathVariable Integer id) {
+		
+		List<Feedback> feedbacks = service.buscarTudo();
+		
+		feedbacks.removeIf(i -> (i.getAvaliador().getId() != id));
+		
+		feedbacks.removeIf(i -> (i.getStatus() == FeedBackStatus.APLICADO));
+		
+		/*
+		for(int i = 0; i < feedbacks.size();i++) {
+			if(feedbacks.get(i).getAvaliado().getId() != id) {
+				feedbacks.remove(i);
+			}
+		}
+		*/
+		return ResponseEntity.ok().body(feedbacks);
+		
+	}
 	
 	/* TENTATIVA FALHA DE FAZER UM ENDPOINT QUE BUSCA TODOS OS FEEDBACKS
 	@RequestMapping(value="/avaliado/aplicados/pessoa/{id}", method = RequestMethod.GET)
